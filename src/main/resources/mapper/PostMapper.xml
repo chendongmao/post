@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atdongruan.dao.PostMapper">
+  <resultMap id="BaseResultMap" type="com.atdongruan.bean.Post">
+    <id column="p_id" jdbcType="INTEGER" property="pId" />
+    <result column="p_title" jdbcType="VARCHAR" property="pTitle" />
+    <result column="p_content" jdbcType="VARCHAR" property="pContent" />
+    <result column="p_click" jdbcType="INTEGER" property="pClick" />
+    <result column="p_time" jdbcType="DATE" property="pTime" />
+    <result column="pu_id" jdbcType="INTEGER" property="puId" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    p_id, p_title, p_content, p_click, p_time, pu_id
+  </sql>
+  <select id="selectByExample" parameterType="com.atdongruan.bean.PostExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from post
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from post
+    where p_id = #{pId,jdbcType=INTEGER}
+  </select>
+
+  <!--模糊查询的sql语句-->
+
+  <select id="readerSearchPost" parameterType="com.atdongruan.bean.Post" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from post
+    where p_title  LIKE '%' #{pTitle,jdbcType=VARCHAR} '%'
+
+  </select>
+  <!--select * from goodsinfo where goodsname like '%' #{goodsname} '%'      p_title  LIKE '%'#{pTitle}'%'-->
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from post
+    where p_id = #{pId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.atdongruan.bean.PostExample">
+    delete from post
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.atdongruan.bean.Post">
+    insert into post (p_id, p_title, p_content, 
+      p_click, p_time, pu_id)
+    values (#{pId,jdbcType=INTEGER}, #{pTitle,jdbcType=VARCHAR}, #{pContent,jdbcType=VARCHAR}, 
+      #{pClick,jdbcType=INTEGER}, #{pTime,jdbcType=DATE}, #{puId,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.atdongruan.bean.Post">
+    insert into post
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pId != null">
+        p_id,
+      </if>
+      <if test="pTitle != null">
+        p_title,
+      </if>
+      <if test="pContent != null">
+        p_content,
+      </if>
+      <if test="pClick != null">
+        p_click,
+      </if>
+      <if test="pTime != null">
+        p_time,
+      </if>
+      <if test="puId != null">
+        pu_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pId != null">
+        #{pId,jdbcType=INTEGER},
+      </if>
+      <if test="pTitle != null">
+        #{pTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="pContent != null">
+        #{pContent,jdbcType=VARCHAR},
+      </if>
+      <if test="pClick != null">
+        #{pClick,jdbcType=INTEGER},
+      </if>
+      <if test="pTime != null">
+        #{pTime,jdbcType=DATE},
+      </if>
+      <if test="puId != null">
+        #{puId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.atdongruan.bean.PostExample" resultType="java.lang.Long">
+    select count(*) from post
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update post
+    <set>
+      <if test="record.pId != null">
+        p_id = #{record.pId,jdbcType=INTEGER},
+      </if>
+      <if test="record.pTitle != null">
+        p_title = #{record.pTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pContent != null">
+        p_content = #{record.pContent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pClick != null">
+        p_click = #{record.pClick,jdbcType=INTEGER},
+      </if>
+      <if test="record.pTime != null">
+        p_time = #{record.pTime,jdbcType=DATE},
+      </if>
+      <if test="record.puId != null">
+        pu_id = #{record.puId,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update post
+    set p_id = #{record.pId,jdbcType=INTEGER},
+      p_title = #{record.pTitle,jdbcType=VARCHAR},
+      p_content = #{record.pContent,jdbcType=VARCHAR},
+      p_click = #{record.pClick,jdbcType=INTEGER},
+      p_time = #{record.pTime,jdbcType=DATE},
+      pu_id = #{record.puId,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.atdongruan.bean.Post">
+    update post
+    <set>
+      <if test="pTitle != null">
+        p_title = #{pTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="pContent != null">
+        p_content = #{pContent,jdbcType=VARCHAR},
+      </if>
+      <if test="pClick != null">
+        p_click = #{pClick,jdbcType=INTEGER},
+      </if>
+      <if test="pTime != null">
+        p_time = #{pTime,jdbcType=DATE},
+      </if>
+      <if test="puId != null">
+        pu_id = #{puId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where p_id = #{pId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.atdongruan.bean.Post">
+    update post
+    set p_title = #{pTitle,jdbcType=VARCHAR},
+      p_content = #{pContent,jdbcType=VARCHAR},
+      p_click = #{pClick,jdbcType=INTEGER},
+      p_time = #{pTime,jdbcType=DATE},
+      pu_id = #{puId,jdbcType=INTEGER}
+    where p_id = #{pId,jdbcType=INTEGER}
+  </update>
+</mapper>

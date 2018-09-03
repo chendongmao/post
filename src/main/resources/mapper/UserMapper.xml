@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.atdongruan.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.atdongruan.bean.User">
+    <id column="u_id" jdbcType="INTEGER" property="uId" />
+    <result column="u_password" jdbcType="VARCHAR" property="uPassword" />
+    <result column="u_email" jdbcType="VARCHAR" property="uEmail" />
+    <result column="u_mopile" jdbcType="VARCHAR" property="uMopile" />
+    <result column="u_name" jdbcType="VARCHAR" property="uName" />
+    <result column="U-_image" jdbcType="VARCHAR" property="uImage" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    u_id, u_password, u_email, u_mopile, u_name, U_image
+  </sql>
+  <!--登录的sql语句-->
+  <select id="findByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+
+  select *
+  from user where u_name = #{username}
+
+</select>
+  <!--后台模糊查询用户-->
+  <select id="ManagerSearchUser" resultMap="BaseResultMap" parameterType="com.atdongruan.bean.User">
+
+    select *
+    from user where u_name LIKE '%' #{uName} '%'
+
+  </select>
+<!--excel表的导入-->
+  <insert id="insertInfoBatch" parameterType="java.util.List">
+    insert into user (u_password, u_email, u_mopile, u_name)
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (#{item.uPassword}, #{item.uEmail}, #{item.uMopile},#{item.uName})
+    </foreach>
+  </insert>
+
+  <select id="selectByExample" parameterType="com.atdongruan.bean.UserExample" resultMap="BaseResultMap">
+  select
+  <if test="distinct">
+    distinct
+  </if>
+  <include refid="Base_Column_List" />
+  from user
+  <if test="_parameter != null">
+    <include refid="Example_Where_Clause" />
+  </if>
+  <if test="orderByClause != null">
+    order by ${orderByClause}
+  </if>
+</select>
+  <select id="selectByUserExample" parameterType="com.atdongruan.bean.UserExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where u_id = #{uId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from user
+    where u_id = #{uId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.atdongruan.bean.UserExample">
+    delete from user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.atdongruan.bean.User">
+    insert into user (u_id, u_password, u_email, 
+      u_mopile, u_name, U-_image
+      )
+    values (#{uId,jdbcType=INTEGER}, #{uPassword,jdbcType=VARCHAR}, #{uEmail,jdbcType=VARCHAR}, 
+      #{uMopile,jdbcType=VARCHAR}, #{uName,jdbcType=VARCHAR}, #{uImage,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.atdongruan.bean.User">
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="uId != null">
+        u_id,
+      </if>
+      <if test="uPassword != null">
+        u_password,
+      </if>
+      <if test="uEmail != null">
+        u_email,
+      </if>
+      <if test="uMopile != null">
+        u_mopile,
+      </if>
+      <if test="uName != null">
+        u_name,
+      </if>
+      <if test="uImage != null">
+        U-_image,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="uId != null">
+        #{uId,jdbcType=INTEGER},
+      </if>
+      <if test="uPassword != null">
+        #{uPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="uEmail != null">
+        #{uEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="uMopile != null">
+        #{uMopile,jdbcType=VARCHAR},
+      </if>
+      <if test="uName != null">
+        #{uName,jdbcType=VARCHAR},
+      </if>
+      <if test="uImage != null">
+        #{uImage,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.atdongruan.bean.UserExample" resultType="java.lang.Long">
+    select count(*) from user
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update user
+    <set>
+      <if test="record.uId != null">
+        u_id = #{record.uId,jdbcType=INTEGER},
+      </if>
+      <if test="record.uPassword != null">
+        u_password = #{record.uPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uEmail != null">
+        u_email = #{record.uEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uMopile != null">
+        u_mopile = #{record.uMopile,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uName != null">
+        u_name = #{record.uName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uImage != null">
+        U-_image = #{record.uImage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update user
+    set u_id = #{record.uId,jdbcType=INTEGER},
+      u_password = #{record.uPassword,jdbcType=VARCHAR},
+      u_email = #{record.uEmail,jdbcType=VARCHAR},
+      u_mopile = #{record.uMopile,jdbcType=VARCHAR},
+      u_name = #{record.uName,jdbcType=VARCHAR},
+      U-_image = #{record.uImage,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.atdongruan.bean.User">
+    update user
+    <set>
+      <if test="uPassword != null">
+        u_password = #{uPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="uEmail != null">
+        u_email = #{uEmail,jdbcType=VARCHAR},
+      </if>
+      <if test="uMopile != null">
+        u_mopile = #{uMopile,jdbcType=VARCHAR},
+      </if>
+      <if test="uName != null">
+        u_name = #{uName,jdbcType=VARCHAR},
+      </if>
+      <if test="uImage != null">
+        U-_image = #{uImage,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where u_id = #{uId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.atdongruan.bean.User">
+    update user
+    set u_password = #{uPassword,jdbcType=VARCHAR},
+      u_email = #{uEmail,jdbcType=VARCHAR},
+      u_mopile = #{uMopile,jdbcType=VARCHAR},
+      u_name = #{uName,jdbcType=VARCHAR},
+      U-_image = #{uImage,jdbcType=VARCHAR}
+    where u_id = #{uId,jdbcType=INTEGER}
+  </update>
+</mapper>
